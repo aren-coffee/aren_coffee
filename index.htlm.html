@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>AREN Coffee | Arctic Coffee Shop · Resolute Bay</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #faf9f7;
+      color: #1e2a2c;
+      scroll-behavior: smooth;
+      line-height: 1.5;
+    }
+
+    /* minimalist container */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* header - clean and spacious */
+    .header {
+      padding: 2.5rem 0 1.5rem;
+      border-bottom: 1px solid #e2e0db;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .logo-area h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #2c4a4a;
+    }
+    .logo-area .inuktitut {
+      font-size: 1rem;
+      font-weight: 400;
+      color: #7f8c8a;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #3a5e5c;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: #b75e3a;
+    }
+
+    /* hero - coffee shop focus */
+    .hero {
+      padding: 5rem 0 4rem;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .hero h2 {
+      font-size: 3.2rem;
+      font-weight: 600;
+      color: #2c4a4a;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: #5b6e6b;
+      margin-bottom: 2rem;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: #ece8e2;
+      padding: 0.3rem 1rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      color: #b75e3a;
+      font-weight: 500;
+    }
+
+    /* minimalist section styling */
+    .section {
+      padding: 4rem 0;
+      border-bottom: 1px solid #ece8e2;
+    }
+    .section:last-child {
+      border-bottom: none;
+    }
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #2c4a4a;
+      margin-bottom: 2rem;
+      letter-spacing: -0.01em;
+    }
+    .section-sub {
+      color: #b75e3a;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    /* grid for features */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+    }
+    .feature-card {
+      background: #ffffff;
+      border-radius: 1.2rem;
+      padding: 1.8rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      border: 1px solid #edeae4;
+      transition: all 0.25s ease;
+    }
+    .feature-card:hover {
+      border-color: #d4cdc0;
+      transform: translateY(-4px);
+    }
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .feature-card h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #2c4a4a;
+    }
+    .feature-card p {
+      color: #617673;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    /* map container minimalist */
+    .map-container {
+      border-radius: 1.2rem;
+      overflow: hidden;
+      border: 1px solid #e2ddd4;
+      margin: 1.5rem 0 0;
+    }
+    #map {
+      height: 340px;
+      width: 100%;
+      background: #e9e5dd;
+    }
+    .map-caption {
+      font-size: 0.75rem;
+      text-align: center;
+      padding: 0.75rem;
+      background: #fffcf8;
+      color: #7f8c8a;
+      border-top: 1px solid #efebe4;
+    }
+
+    /* impact pills */
+    .impact-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .pill {
+      background: #f0ede8;
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #3a5e5c;
+    }
+
+    /* quote block */
+    .quote {
+      background: #fefcf9;
+      border-left: 4px solid #c07a58;
+      padding: 1.5rem;
+      border-radius: 0.8rem;
+      font-style: normal;
+      font-weight: 400;
+      color: #3b5a56;
+      margin: 1.5rem 0;
+    }
+
+    /* footer */
+    .footer {
+      padding: 3rem 0 2.5rem;
+      text-align: center;
+      color: #8d9e9a;
+      font-size: 0.8rem;
+      border-top: 1px solid #ece8e2;
+      margin-top: 1rem;
+    }
+    a {
+      color: #b75e3a;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* animations */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        padding: 0 1.5rem;
+      }
+      .hero h2 {
+        font-size: 2.2rem;
+      }
+      .header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .section {
+        padding: 3rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header fade-up">
+    <div class="logo-area">
+      <h1>AREN Coffee</h1>
+      <div class="inuktitut">ᐋᕆᓐ ᑳᐱ · ᐊᖏᑦ, ᕋᓐᑦ, ᐁᓐᓂᖅ, ᓐᓂᖅ</div>
+    </div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#concept">Concept</a>
+      <a href="#impact">Impact</a>
+      <a href="#map-section">Location</a>
+    </div>
+  </div>
+
+  <!-- Hero - Coffee Shop Focus -->
+  <div class="hero fade-up">
+    <div class="hero-badge">Resolute Bay · Nunavut</div>
+    <h2>grab + go.<br>Arctic warmth.</h2>
+    <p>Minimal seating · premium coffee · community heart</p>
+    <button id="exploreBtn">Explore the concept →</button>
+  </div>
+
+  <!-- About / Executive Summary -->
+  <div id="about" class="section fade-up">
+    <div class="section-sub">— Welcome</div>
+    <h2 class="section-title">A coffee space for the Arctic</h2>
+    <div class="grid-2">
+      <div>
+        <p style="margin-bottom: 1rem; color: #2f504c;"><strong>AREN Coffee</strong> is a proposed grab-and-go café in Resolute, Nunavut. Designed for quick, high-quality coffee, hot beverages, and light snacks — with minimal seating and maximum warmth.</p>
+        <p style="margin-bottom: 1rem; color: #617673;">Our mission: offer a warm, accessible café experience that supports social connection in a remote Arctic town. Compact, energy-efficient, and built for Arctic conditions.</p>
+        <p style="font-size: 0.9rem; color: #9b7b66;"><strong>Designer role:</strong> Concept, branding & operational guidance. Local partners implement & operate.</p>
+      </div>
+      <div class="feature-card" style="background: #fefaf5;">
+        <div class="feature-icon">☕❄️</div>
+        <h3>Why Resolute?</h3>
+        <p>Small population (~200) with limited food options. Harsh climate demands warm drinks. Ideal for residents, researchers, and tourists. Grab-and-go format = simple, low-risk, high community value.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coffee Concept - minimalist menu style -->
+  <div id="concept" class="section fade-up">
+    <div class="section-sub">— what we serve</div>
+    <h2 class="section-title">Coffee, culture, comfort</h2>
+    <div class="grid-3">
+      <div class="feature-card">
+        <div class="feature-icon">☕</div>
+        <h3>Premium beverages</h3>
+        <p>Espresso, drip coffee, loose-leaf teas, rich hot chocolate — locally minded, always fresh.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🍪</div>
+        <h3>Light snacks</h3>
+        <p>Bannock-inspired pastries, energy bites, and takeaway treats for Arctic days.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🪑🌿</div>
+        <h3>Minimal seating</h3>
+        <p>Cozy nook with northern lights motif — space for a few, designed for connection.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <h3>Local crafts display</h3>
+        <p>Showcasing Inuit art, community info, and cultural exchange.</p>
+      </div>
+    </div>
+    <div class="quote">
+      “AREN represents ᐊᖏᑦ, ᕋᓐᑦ, ᐁᓐᓂᖅ, ᓐᓂᖅ — honoring Inuit language and the spirit of gathering.”
+    </div>
+  </div>
+
+  <!-- Community Impact -->
+  <div id="impact" class="section fade-up">
+    <div class="section-sub">— community first</div>
+    <h2 class="section-title">Built for connection</h2>
+    <div class="impact-pills">
+      <span class="pill">🤝 Warm gathering spot</span>
+      <span class="pill">💼 Local employment</span>
+      <span class="pill">🏘️ Low-footprint hub</span>
+      <span class="pill">🌱 Enhances social fabric</span>
+      <span class="pill">📖 Cultural visibility</span>
+    </div>
+    <div class="grid-2" style="margin-top: 2rem;">
+      <div class="feature-card">
+        <h3>Implementation overview</h3>
+        <p>✔ Designed for local partners or organizations<br>
+        ✔ Compact, energy-efficient design<br>
+        ✔ Simple Arctic-friendly operation<br>
+        ✔ Flexible & scalable model</p>
+      </div>
+      <div class="feature-card">
+        <h3>Designer disclaimer</h3>
+        <p>AREN Coffee is offered as a community development proposal. I provide concept, branding & operational guidance. I do not invest or manage daily operations — local stakeholders bring it to life.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map + Location Section -->
+  <div id="map-section" class="section fade-up">
+    <div class="section-sub">— find us</div>
+    <h2 class="section-title">Resolute Bay, NU</h2>
+    <div class="map-container">
+      <div id="map"></div>
+      <div class="map-caption">📍 Qausuittuq (Resolute), Nunavut — gateway to the High Arctic</div>
+    </div>
+    <div style="margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: #7b8e8a;">
+      A warm cup in the heart of the Arctic. Open for residents, travelers, and dreamers.
+    </div>
+  </div>
+
+  <!-- Footer - Updated as requested -->
+  <div class="footer">
+    © 2025 AREN Coffee — Aren Nersesyan
+  </div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // scroll animations
+  const fadeElements = document.querySelectorAll('.fade-up');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: "0px 0px -20px 0px" });
+  fadeElements.forEach(el => observer.observe(el));
+
+  // map - Resolute Bay minimalist style
+  const resoluteCoords = [74.697, -94.832];
+  const map = L.map('map').setView(resoluteCoords, 5.2);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB',
+    subdomains: 'abcd',
+    minZoom: 3,
+    maxZoom: 11
+  }).addTo(map);
+  
+  // custom coffee cup marker (minimal)
+  const coffeeIcon = L.divIcon({
+    className: 'minimal-coffee-marker',
+    html: '☕',
+    iconSize: [28, 28],
+    popupAnchor: [0, -12]
+  });
+  const marker = L.marker(resoluteCoords, { icon: coffeeIcon }).addTo(map);
+  marker.bindPopup(`
+    <b>AREN Coffee</b><br>
+    Proposed location · Resolute Bay<br>
+    <i>Grab-and-go Arctic café</i>
+  `).openPopup();
+  
+  // subtle circle
+  const circle = L.circle(resoluteCoords, {
+    color: '#c07a58',
+    fillColor: '#ddb892',
+    fillOpacity: 0.12,
+    radius: 17000,
+    weight: 1.2
+  }).addTo(map);
+  
+  // simple pulse on circle
+  let pulseFlag = false;
+  setInterval(() => {
+    circle.setStyle({ fillOpacity: pulseFlag ? 0.2 : 0.1, weight: pulseFlag ? 1.6 : 1.1 });
+    pulseFlag = !pulseFlag;
+  }, 1500);
+  
+  // resize map handler
+  window.addEventListener('resize', () => map.invalidateSize());
+  
+  // explore button scroll
+  const exploreBtn = document.getElementById('exploreBtn');
+  if(exploreBtn) exploreBtn.addEventListener('click', () => {
+    document.getElementById('concept').scrollIntoView({ behavior: 'smooth' });
+  });
+  
+  // gentle floating snow - minimal dusting
+  function addLightSnow() {
+    if (window.innerWidth < 500 && Math.random() > 0.7) return;
+    const snow = document.createElement('div');
+    snow.innerHTML = '❄️';
+    snow.style.position = 'fixed';
+    snow.style.top = '-10px';
+    snow.style.left = Math.random() * window.innerWidth + 'px';
+    snow.style.fontSize = Math.random() * 8 + 10 + 'px';
+    snow.style.opacity = Math.random() * 0.3 + 0.1;
+    snow.style.pointerEvents = 'none';
+    snow.style.zIndex = '1000';
+    snow.style.animation = `snowFall ${Math.random() * 6 + 4}s linear forwards`;
+    document.body.appendChild(snow);
+    setTimeout(() => snow.remove(), 8000);
+  }
+  const snowKey = document.createElement('style');
+  snowKey.textContent = `@keyframes snowFall { 0% { transform: translateY(0) rotate(0deg); opacity: 0.4; } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0; } }`;
+  document.head.appendChild(snowKey);
+  let snowInterval;
+  function startLightSnow() {
+    if (snowInterval) clearInterval(snowInterval);
+    snowInterval = setInterval(() => {
+      if (document.visibilityState === 'visible') addLightSnow();
+    }, 1200);
+  }
+  startLightSnow();
+  if (window.innerWidth < 700) {
+    clearInterval(snowInterval);
+    setInterval(() => { if (Math.random() > 0.65) addLightSnow(); }, 1800);
+  }
+  
+  // add hover minimal effect to cards
+  document.querySelectorAll('.feature-card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.borderColor = '#d1bc9c';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.borderColor = '#edeae4';
+    });
+  });
+  
+  console.log('AREN Coffee — minimalist Arctic hub');
+</script>
+
+<style>
+  .minimal-coffee-marker {
+    background: none;
+    font-size: 1.6rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    text-align: center;
+  }
+  .leaflet-popup-content-wrapper {
+    background: #ffffff;
+    color: #2c4a4a;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    font-family: 'Inter', sans-serif;
+    border-left: 3px solid #c07a58;
+  }
+  .leaflet-popup-tip {
+    background: #ffffff;
+  }
+  button {
+    font-family: 'Inter', sans-serif;
+    background: #2c4a4a;
+    border: none;
+    padding: 0.6rem 1.4rem;
+    border-radius: 40px;
+    font-weight: 500;
+    color: white;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  button:hover {
+    background: #b75e3a;
+  }
+  ::selection {
+    background: #e7d9ce;
+    color: #2c4a4a;
+  }
+</style>
+</body>
+</html>
